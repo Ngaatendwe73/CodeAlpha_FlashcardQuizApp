@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flashcard Quiz App</title>
+    <style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  body {
+    background-color: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+    min-height: 100vh;
+  }
+
+  #app {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 580px;
+    height: fit-content;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1a1a2e;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  #subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 1.2rem;
+  }
+
+  #counter {
+    text-align: center;
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 0.6rem;
+  }
+
+  #progress-bar-wrap {
+    background: #e8ecf0;
+    border-radius: 99px;
+    height: 6px;
+    margin-bottom: 1.2rem;
+    overflow: hidden;
+  }
+
+  #progress-bar {
+    height: 6px;
+    width: 20%;
+    background: #4f46e5;
+    border-radius: 99px;
+    transition: width 0.3s ease;
+  }
+
+  #flashcard {
+    background: #f8f9ff;
+    border: 1.5px solid #e0e4ff;
+    border-radius: 16px;
+    padding: 2.5rem 1.5rem;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  #flashcard:hover {
+    border-color: #4f46e5;
+  }
+
+  #card-tag {
+    position: absolute;
+    top: 12px;
+    left: 14px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 8px;
+    background: #e0e4ff;
+    color: #4f46e5;
+  }
+
+  #card-tag.answer {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  #question-text {
+    font-size: 18px;
+    font-weight: 500;
+    color: #1a1a2e;
+    line-height: 1.6;
+  }
+
+  #answer-text {
+    font-size: 16px;
+    color: #444;
+    line-height: 1.6;
+    display: none;
+  }
+
+  #hint-text {
+    font-size: 12px;
+    color: #bbb;
+    margin-top: 1rem;
+  }
+
+  #show-btn {
+    display: block;
+    margin: 1rem auto 0;
+    padding: 10px 30px;
+    font-size: 14px;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  #show-btn:hover {
+    background: #3730a3;
+  }
+
+  #nav-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 1rem;
+  }
+
+  #nav-row button {
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+    border: 1.5px solid #e0e4ff;
+    border-radius: 10px;
+    background: white;
+    color: #4f46e5;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  #nav-row button:hover {
+    background: #f0f0ff;
+  }
+
+  #actions-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 1rem;
+  }
+
+  #actions-row button {
+    flex: 1;
+    padding: 9px;
+    font-size: 13px;
+    border: 1.5px solid #e0e4ff;
+    border-radius: 10px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  #actions-row button:hover {
+    background: #f5f5ff;
+  }
+
+  #form-area {
+    background: #f8f9ff;
+    border: 1px solid #e0e4ff;
+    border-radius: 14px;
+    padding: 1.2rem;
+    margin-top: 1.5rem;
+    display: none;
+  }
+
+  #form-area h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 0.8rem;
+  }
+
+  #form-area input,
+  #form-area textarea {
+    width: 100%;
+    padding: 9px 12px;
+    font-size: 14px;
+    border: 1px solid #d0d5ff;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background: white;
+    color: #1a1a2e;
+    resize: vertical;
+  }
+
+  #form-btns {
+    display: flex;
+    gap: 8px;
+  }
+
+  #form-btns button {
+    flex: 1;
+    padding: 9px;
+    font-size: 13px;
+    border-radius: 8px;
+    border: 1.5px solid #e0e4ff;
+    background: white;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  #form-btns button:first-child {
+    background: #4f46e5;
+    color: white;
+    border: none;
+  }
+
+  #form-btns button:first-child:hover {
+    background: #3730a3;
+  }
+</style>
+</head>
+<body>
+
+  <div id="app">
+
+    <h1>Flashcard Quiz</h1>
+    <p id="subtitle">Click the card to reveal the answer</p>
+
+    <div id="counter">Card 1 of 5</div>
+
+    <div id="progress-bar-wrap">
+      <div id="progress-bar"></div>
+    </div>
+
+    <div id="flashcard" onclick="toggleAnswer()">
+      <span id="card-tag">Question</span>
+      <p id="question-text">What is the capital of France?</p>
+      <p id="answer-text">Paris</p>
+      <p id="hint-text">Tap to reveal answer</p>
+    </div>
+
+    <button id="show-btn" onclick="toggleAnswer()">Show Answer</button>
+
+    <div id="nav-row">
+      <button onclick="prevCard()">&#8592; Previous</button>
+      <button onclick="nextCard()">Next &#8594;</button>
+    </div>
+
+    <div id="actions-row">
+      <button onclick="toggleForm('add')">+ Add</button>
+      <button onclick="toggleForm('edit')">&#9998; Edit</button>
+      <button onclick="deleteCard()">&#128465; Delete</button>
+    </div>
+
+    <div id="form-area">
+      <h3 id="form-title">Add New Flashcard</h3>
+      <input type="text" id="form-question" placeholder="Enter question..." />
+      <textarea id="form-answer" placeholder="Enter answer..."></textarea>
+      <div id="form-btns">
+        <button onclick="saveCard()">Save</button>
+        <button onclick="closeForm()">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+<script>
+  const cards = [
+    { q: "What is the capital of France?", a: "Paris" },
+    { q: "What does HTML stand for?", a: "HyperText Markup Language" },
+    { q: "What is the powerhouse of the cell?", a: "The Mitochondria" },
+    { q: "What year did World War II end?", a: "1945" },
+    { q: "What is 2 to the power of 10?", a: "1,024" }
+  ];
+
+  let current = 0;
+  let shown = false;
+  let mode = null;
+
+  function render() {
+    const card = cards[current];
+    document.getElementById('question-text').textContent = card.q;
+    document.getElementById('answer-text').textContent = card.a;
+    document.getElementById('counter').textContent = `Card ${current + 1} of ${cards.length}`;
+    document.getElementById('progress-bar').style.width = `${((current + 1) / cards.length) * 100}%`;
+    hideAnswer();
+  }
+
+  function hideAnswer() {
+    shown = false;
+    document.getElementById('answer-text').style.display = 'none';
+    document.getElementById('question-text').style.display = 'block';
+    document.getElementById('hint-text').style.display = 'block';
+    document.getElementById('card-tag').textContent = 'Question';
+    document.getElementById('card-tag').className = '';
+    document.getElementById('show-btn').textContent = 'Show Answer';
+  }
+
+  function toggleAnswer() {
+    shown = !shown;
+    document.getElementById('answer-text').style.display = shown ? 'block' : 'none';
+    document.getElementById('question-text').style.display = shown ? 'none' : 'block';
+    document.getElementById('hint-text').style.display = shown ? 'none' : 'block';
+    document.getElementById('card-tag').textContent = shown ? 'Answer' : 'Question';
+    document.getElementById('card-tag').className = shown ? 'answer' : '';
+    document.getElementById('show-btn').textContent = shown ? 'Hide Answer' : 'Show Answer';
+  }
+
+  function nextCard() {
+    current = (current + 1) % cards.length;
+    render();
+    closeForm();
+  }
+
+  function prevCard() {
+    current = (current - 1 + cards.length) % cards.length;
+    render();
+    closeForm();
+  }
+
+  function deleteCard() {
+    if (cards.length <= 1) {
+      alert('You need at least one card!');
+      return;
+    }
+    const confirmed = confirm('Delete this flashcard?');
+    if (!confirmed) return;
+    cards.splice(current, 1);
+    if (current >= cards.length) current = cards.length - 1;
+    render();
+  }
+
+  function toggleForm(m) {
+    const area = document.getElementById('form-area');
+    if (mode === m && area.style.display === 'block') {
+      closeForm();
+      return;
+    }
+    mode = m;
+    area.style.display = 'block';
+    if (m === 'add') {
+      document.getElementById('form-title').textContent = 'Add New Flashcard';
+      document.getElementById('form-question').value = '';
+      document.getElementById('form-answer').value = '';
+    } else {
+      document.getElementById('form-title').textContent = 'Edit This Flashcard';
+      document.getElementById('form-question').value = cards[current].q;
+      document.getElementById('form-answer').value = cards[current].a;
+    }
+  }
+
+  function saveCard() {
+    const q = document.getElementById('form-question').value.trim();
+    const a = document.getElementById('form-answer').value.trim();
+    if (!q || !a) {
+      alert('Please fill in both the question and answer!');
+      return;
+    }
+    if (mode === 'add') {
+      cards.push({ q, a });
+      current = cards.length - 1;
+    } else {
+      cards[current] = { q, a };
+    }
+    render();
+    closeForm();
+  }
+
+  function closeForm() {
+    document.getElementById('form-area').style.display = 'none';
+    mode = null;
+  }
+
+  render();
+</script>
+</body>
+</html>
